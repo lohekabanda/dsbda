@@ -1,0 +1,59 @@
+1D===
+
+drag order table on drag sheet
+rename title=1D:find tot sales of us
+column = null
+row = sum(sales)
+filter= order date
+
+
+2D===
+
+rename sheet = 2D
+rename title=2D:state sales distribution
+double click on dimension- states
+drag sales on Size marks
+filter= order date
+
+
+3D===
+
+
+
+
+
+MULTIDIMENSIONS===
+
+drag order table on drag sheet
+rename title = Regionwise sale n profit values for each product category
+column = sum(profit)
+row = sum(sales)
+drag category form dimensions to Color
+drag region form dimensions to shape
+
+
+
+TREE===
+drag order table on drag sheet
+rename title=aggregated sales tot. for each product category
+column = sub-category
+row = sum(sales)
+click on show me and select tree map chart type
+drag ship mode form dimensions to Color
+remove ship mode
+drag profit form measures to shape
+
+
+
+TEMPORAL===
+drag order table on drag sheet
+rename title=Build time series chart with two variables sales and time.
+column = Year(Order Date)
+row = sum(sales)
+click on year(order date) and select continous
+
+click on Analytics > forecast model (drag on view)
+
+drag segment mode form dimensions to Color
+
+drag category to rows

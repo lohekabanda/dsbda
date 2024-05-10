@@ -1,0 +1,232 @@
+1. Open Eclipse> File > New > Java Project >( Name it – Process) > Next>Click on
+Libraries Tab>Click on Add External JARS tab
+jar FILE LOCATION
+/usr/lib/Hadoop ->select all jar files
+/usr/lib/Hadoop/client ->select all jar files
+2. Right Click > New > Package ( Name it - Process > Finish.
+3. Right Click on Process Package > New > Class (Name it – Process).
+
+
+code by as.prof-----------
+
+package Driver;
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class Driver {
+
+  public static class IPMapper
+       extends Mapper<Object, Text, Text, IntWritable>{
+
+    private final static IntWritable one = new IntWritable(1);
+    private Text ip = new Text();
+
+    public void map(Object key, Text value, Context context
+                    ) throws IOException, InterruptedException {
+      // Assuming the IP address is the first token in each line
+      StringTokenizer itr = new StringTokenizer(value.toString());
+      if (itr.hasMoreTokens()) {
+        ip.set(itr.nextToken());
+        context.write(ip, one);
+      }
+    }
+  }
+
+  public static class IntSumReducer
+       extends Reducer<Text,IntWritable,Text,IntWritable> {
+    private IntWritable result = new IntWritable();
+
+    public void reduce(Text key, Iterable<IntWritable> values,
+                       Context context
+                       ) throws IOException, InterruptedException {
+      int sum = 0;
+      for (IntWritable val : values) {
+        sum += val.get();
+      }
+      result.set(sum);
+      context.write(key, result);
+    }
+  }
+
+  public static void main(String[] args) throws Exception {
+    Configuration conf = new Configuration();
+    Job job = Job.getInstance(conf, "IP address count");
+    job.setJarByClass(Driver.class);
+    job.setMapperClass(IPMapper.class);
+    job.setCombinerClass(IntSumReducer.class);
+    job.setReducerClass(IntSumReducer.class);
+    job.setOutputKeyClass(Text.class);
+    job.setOutputValueClass(IntWritable.class);
+    FileInputFormat.addInputPath(job, new Path(args[0]));
+    FileOutputFormat.setOutputPath(job, new Path(args[1]));
+    System.exit(job.waitForCompletion(true) ? 0 : 1);
+  }
+}
+
+Next-------------------
+
+click project name >buildpath >add external archives>file sys> user>lib>hadoop
+
+click project name >buildpath >add external archives>file sys> user>lib>hadoopmapreduce
+
+
+save Process.txt file as txt---------
+
+In terminal---------
+
+pwd
+
+
+hadoop fs -put Desktop/Process.txt Process.txt
+
+#to create jar file go on process.java class >click.export>java>jar file>rename as process.jar
+
+hadoop jar Process.jar Process.Process Process.txt dir16
+
+
+hadoop fs -cat dir16/part-r-00000
+
+
+
+
+
+
+*********************************************************************************************
+Standby code--------------------------
+
+
+code by cg====
+
+# Add following code in that class
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.*;
+public class UserLogDriver {
+public static void main(String[] args) {
+JobClient my_client = new JobClient();
+// Create a configuration object for the job
+JobConf job_conf = new JobConf(UserLogDriver.class);
+// Set a name of the Job
+job_conf.setJobName("MaxLoggedUsers");
+// Specify data type of output key and value
+job_conf.setOutputKeyClass(Text.class);
+job_conf.setOutputValueClass(IntWritable.class);
+// Specify names of Mapper and Reducer Class
+job_conf.setMapperClass(UserLogMapper.class);
+job_conf.setReducerClass(UserLogReducer .class);
+// Specify formats of the data type of Input and output
+job_conf.setInputFormat(TextInputFormat.class);
+job_conf.setOutputFormat(TextOutputFormat.class);
+// Set input and output directories using command line arguments,
+//arg[0] = name of input directory on HDFS, and arg[1] = name of
+output directory to be created to store the output file.
+FileInputFormat.setInputPaths(job_conf, new Path(args[0]));
+FileOutputFormat.setOutputPath(job_conf, new Path(args[1]));
+my_client.setConf(job_conf);
+try {
+// Run the job
+JobClient.runJob(job_conf);
+} catch (Exception e) {
+e.printStackTrace();
+}
+}
+}
+# Save the file
+
+
+4. Right Click on mrLogFile_demo Package > New > Class (Name it –
+UserLogReducer).
+import java.io.IOException;
+import java.util.*;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.*;
+public class UserLogReducer extends MapReduceBase implements Reducer<Text,
+IntWritable, Text, IntWritable> {
+public void reduce(Text t_key, Iterator<IntWritable> values,
+OutputCollector<Text,IntWritable> output, Reporter reporter) throws IOException
+{
+Text key = t_key;
+int frequencyForUser = 0;
+while (values.hasNext()) {
+// replace type of value with the actual type of our value
+IntWritable value = (IntWritable) values.next();
+frequencyForUser += value.get();
+}
+output.collect(key, new IntWritable(frequencyForUser));
+}
+}
+# Save the file
+
+
+5. Right Click on mrLogFile_demo Package > New > Class (Name it –
+UserLogMapper).
+# Add following code in that class
+package MRLogFile;
+import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.*;
+public class UserLogMapper extends MapReduceBase implements Mapper<LongWritable,
+Text, Text, IntWritable> {
+private final static IntWritable one = new IntWritable(1);
+public void map(LongWritable key, Text value, OutputCollector<Text,
+IntWritable> output, Reporter reporter) throws IOException {
+String valueString = value.toString();
+String[] SingleUserData = valueString.split("-");
+output.collect(new Text(SingleUserData[0]), one);
+}
+}
+# Save the file
+
+
+
+PART B
+Create .jar file for your program execution :
+Make a jar file
+In eclipse Right click on MRLogFile Project > then select Export> Click on Java>JAR
+Files>Click on Next>then select export destination for JAR file as
+/home/Cloudera/MRlogFile.jar>Finish
+*MRLogFile.jar file will get created in your /home/Cloudera/ folder
+
+
+PART C:
+# Open terminal
+#Check for present working Directory
+[cloudera@quickstart ~]$ pwd
+/home/cloudera
+#Create inputfoder with name MRinputfolder1
+[cloudera@quickstart ~]$ hdfs dfs -mkdir /MRinputfolder1
+[cloudera@quickstart ~]$ hdfs dfs -ls /
+
+[cloudera@quickstart ~]$ hdfs dfs -put
+/home/cloudera/access_log_short.txt /MRInputfolder1
+[cloudera@quickstart ~]$ hdfs dfs -cat
+/MRInputfolder1/access_log_short.txt
+[cloudera@quickstart ~]$ hadoop jar /home/cloudera/MRLogFile.jar
+mrLogFile_demo.UserLogDriver /MRInputfolder1/access_log_short.txt
+/MRoutputfolder1
+
+
+[cloudera@quickstart ~]$ hdfs dfs -ls /MRoutputfolder1
+
+
+[cloudera@quickstart ~]$ hdfs dfs -cat /MRoutputfolder1/part-00000
+
+
+OR
+
+Goto Browser and enter
+localhost:50070 and check the output in output directory.

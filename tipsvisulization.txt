@@ -1,0 +1,109 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('tips_DV.csv')
+df
+
+df.rename(columns = {'size':'peoples'}, inplace = True)
+
+df.isna().sum()
+
+col_var = df[['peoples','sex', 'smoker', 'day', 'time']]
+for i in col_var:
+    print(i, df[i].unique())
+
+df.columns
+
+#heatmap**********************************************
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+****************************
+sns.pairplot(df)
+
+#*lineplot **********************************
+# Convert the 'total_bill' column to numeric type
+df['total_bill'] = pd.to_numeric(df['total_bill'], errors='coerce')
+
+# Group the data by 'day' and calculate the mean of 'total_bill'
+day_means = df.groupby('day')['total_bill'].mean().reset_index()
+
+# Create a line plot for the mean 'total_bill' by 'day'
+plt.figure(figsize=(8, 6))
+plt.plot(day_means['day'], day_means['total_bill'])
+plt.xlabel('Day')
+plt.ylabel('Mean Total Bill')
+plt.title('Line Plot for Mean Total Bill by Day')
+plt.xticks(rotation=45)
+plt.show()
+
+
+
+#**boxplot ***********************************
+# Convert the 'total_bill' column to numeric type
+df['total_bill'] = pd.to_numeric(df['total_bill'], errors='coerce')
+
+# Create a box plot for 'total_bill' by 'day'
+plt.figure(figsize=(8, 6))
+df.boxplot(column='total_bill', by='day')
+plt.xlabel('Day')
+plt.ylabel('Total Bill')
+plt.title('Box Plot for Total Bill by Day')
+plt.xticks(rotation=45)
+plt.show()
+
+# Create a box plot for 'total_bill' by 'time'
+plt.figure(figsize=(8, 6))
+df.boxplot(column='total_bill', by='time')
+plt.xlabel('Time')
+plt.ylabel('Total Bill')
+plt.title('Box Plot for Total Bill by Time')
+plt.xticks(rotation=45)
+plt.show()
+
+# Create a box plot for 'total_bill' by 'tip'
+plt.figure(figsize=(8, 6))
+df.boxplot(column='total_bill', by='tip')
+plt.xlabel('tip')
+plt.ylabel('Total Bill')
+plt.title('Box Plot for Total Bill by tip')
+plt.xticks(rotation=45)
+plt.show()
+
+#*histogram******************************
+sns.histplot(df,x='total_bill',hue='time')
+
+sns.histplot(df,x='tip',hue='sex')
+
+sns.histplot(df,x='tip',hue='smoker')
+
+#*scatterplot x***************************
+sns.scatterplot(df,x='total_bill',y='tip',hue='time')
+
+sns.scatterplot(df,x='total_bill',y='tip',hue='smoker')
+
+#*violin x************************
+plt.figure(figsize=(8, 6))
+plt.violinplot(dataset=[df[df['time'] == time]['total_bill'] for time in df['time'].unique()],showmeans=True)
+plt.xlabel('Time')
+plt.ylabel('Total Bill')
+plt.title('Violin Plot for Total Bill by Time')
+plt.xticks(range(1, len(df['time'].unique()) + 1), df['time'].unique(), rotation=45)
+plt.show()
+
+plt.figure(figsize=(12, 8))
+sns.violinplot(x='sex', y='tip', data=df, palette='viridis')
+plt.title('Violin Plot: Age Distribution by Output', fontsize=16)
+plt.xlabel('Output Value', fontsize=14)
+plt.ylabel('Age', fontsize=14)
+plt.show()
+
+#barplot***********************
+# Create a bar plot for the 'day' column
+plt.figure(figsize=(8, 6))
+day_counts = df['day'].value_counts()
+day_counts.plot(kind='bar')
+plt.xlabel('Day')
+plt.ylabel('Count')
+plt.title('Bar Plot for Day')
+plt.show()

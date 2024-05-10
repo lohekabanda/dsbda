@@ -1,0 +1,79 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(r'C:\Users\HP\Downloads\TE_IT_DSBDA_ASSIGNMENTS_SPPU-main\TE_IT_DSBDA_ASSIGNMENTS_SPPU-main\Group_B\B_4\heart.csv')
+df
+
+df.describe
+
+df.columns
+
+df.head
+df.tail
+
+df.info()
+
+df = df.drop_duplicates()
+df
+
+#to clean ,there is no null value, it's clean
+df.isna().sum()
+
+#linechart
+sns.lineplot(data=df, x=df.age, y=df.cp, hue='output')
+
+sns.lineplot(data=df, x=df.age, y= df.trtbps,hue = 'output')
+
+sns.lineplot(data=df,x=df.age,y=df.chol,hue='output')
+
+#heatmap
+plt.figure(figsize=(10,6))
+sns.heatmap(df.corr(),cmap = 'YlGnBu', annot = True)
+
+#barplot
+output_counts = df['output'].value_counts()
+output_counts.plot(kind='bar', figsize=(10, 6), rot=0)
+plt.title('Distribution of Output Values', fontsize=16)
+plt.xlabel('Output Value', fontsize=14)
+plt.ylabel('Count', fontsize=14)
+plt.show()
+
+#scatterplot
+plt.figure(figsize=(10, 6))
+plt.scatter(df['age'], df['chol'], c=df['output'], cmap='viridis')
+plt.title('Scatter Plot: Age vs Cholesterol', fontsize=16)
+plt.xlabel('Age', fontsize=14)
+plt.ylabel('Cholesterol', fontsize=14)
+cbar = plt.colorbar()
+cbar.set_label('Output Value', fontsize=12)
+plt.show()
+
+# Shows the Distribution of Heat Diseases with respect to male and female
+sns.histplot(data=df,x=df.output,hue=df.sex)
+
+# Shows the Distribution of cp types with respect to male and female
+sns.histplot(data=df,x=df.cp,hue=df.sex)
+
+sns.histplot(data=df,x=df.cp, hue='output')
+
+# Shows the Distribution of age w.r.t output
+sns.histplot(data=df,x=df['age'], hue='output')
+
+#Boxplot 
+plt.figure(figsize=(10, 6))
+df.boxplot(column=['age', 'trtbps', 'chol', 'thalachh', 'oldpeak'], by='output')
+plt.title('Box Plot: Feature Distributions by Output', fontsize=16)
+plt.xlabel('Output Value', fontsize=14)
+plt.xticks(rotation=45)
+plt.ylabel('Feature Values', fontsize=14)
+plt.show()
+
+#violin Plot
+plt.figure(figsize=(12, 8))
+sns.violinplot(x='output', y='age', data=df, palette='viridis')
+plt.title('Violin Plot: Age Distribution by Output', fontsize=16)
+plt.xlabel('Output Value', fontsize=14)
+plt.ylabel('Age', fontsize=14)
+plt.show()

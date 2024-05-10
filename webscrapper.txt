@@ -1,0 +1,64 @@
+import requests
+import bs4
+
+
+request1 = requests.get('https://www.amazon.com/Fitness-Pressure-Pedometer-Waterproof-Smartwatches/dp/B0CQ56R4DS/ref=sr_1_1?_encoding=UTF8&content-id=amzn1.sym.33f8f65b-b95c-44af-8b89-e59e69e79828&dib=eyJ2IjoiMSJ9.5yqF3zrGtNJfKinuFxLEOhORze-mWDa-WCJVSyC_Si6RA7im0mC3CRrfd4GSM76LzkawLEsx3GCJRvoS3ct345zN_Y6_bgwmqMsFraM25aEhPKYhlRDoVWJEl6PUoyFWW-IpnGK5fn7vJXui8Zl0sQGMBSV6NhH1GdEVEccb5f5mieQNcq7IKPOjDiT7UvDCSqwB2cEaCQJmTnZRI9sPr9LZGOtGU0pOOvA7H9g8XnQ.KYO_lhWCvD1D5k1UJGznj7_aJmEqqhNClqkMAvl6ONU&dib_tag=se&keywords=activity+trackers+and+smartwatches&pd_rd_r=ccb755fa-3d69-461c-9282-87df4f3d4356&pd_rd_w=xTGlD&pd_rd_wg=TlB0L&pf_rd_p=33f8f65b-b95c-44af-8b89-e59e69e79828&pf_rd_r=RVKJMFVXJ4B0C1FZ6SBB&qid=1714504831&sr=8-1&th=1')
+request1
+
+
+soup = bs4.BeautifulSoup(request1.text)
+
+
+#Fetching reviews and comments
+
+reviews = soup.find_all('div',{'class':'a-expander-content reviewText review-text-content a-expander-partial-collapse-content'});
+for review in reviews:
+    print(review.get_text() + " \n")
+    
+    
+    
+    
+#Average overall ratings
+ratings = soup.find('span',{'class':'a-size-base a-nowrap'}).get_text();
+print(ratings) 
+
+
+
+
+#Individual ratings
+indivi_ratings = soup.find_all('span',{'class':'a-icon-alt'});
+for indivi_rating in indivi_ratings:
+    print(indivi_rating.get_text() + "\n\n")
+    
+    
+    
+#comment tags 
+tags =soup.find('table',{'class':'a-keyvalue prodDetTable'}).get_text();
+print(tags)
+
+
+
+#customer names
+cust_names = soup.find_all('span',{'class':'a-profile-name'});
+for cust_name in cust_names:
+    print(cust_name.get_text() + "\n")
+    
+    
+
+#for price
+price = soup.find('span',{'class':'a-price'}).get_text();
+print(price)
+
+#extra to do
+questions = soup.find_all('h3',{'class':'a-spacing-mini'});
+for question in questions:
+    print(question.get_text())
+
+#      RLQA : Smart Watch Change Your Lifestyle 
+#  Smartwatch compatible with iOS and Android 
+#    Various practical functions make life more convenient 
+#  24H All-Day Health Tracking 
+#  123+Sports Modes & Real-time Sports Data 
+#  1.83" Full HD Screen & 200+ Dials 
+#  How to pair a smart watch with a mobile phone? 
+# In[ ]:

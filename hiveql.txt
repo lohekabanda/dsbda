@@ -1,0 +1,75 @@
+run this by starting vm in it cloudera and then in cloudera quick start terminal (above) run ll this commands.
+enter given commands one by one:
+
+~ hive
+
+~ create database mydb2;
+
+~ use mybd2;
+
+~ create table flight(fno int, year int, dest varchar(10), delay float);
+
+~ alter table flight rename to air_flight;
+
+~ alter table air_flight add columns(source varchar(10));
+
+~ drop table flight;
+
+~ desc air_flight;
+
+~ create table flight(fno int, year int, dest varchar(10), delay float)
+> row format delimited
+> fields terminated by ','
+> lines terminated by '\n'
+> stored as textfile;
+
+~ insert into flight values(123, 2009, "mumbai", 30.6);
+~ insert into flight values(124, 2008, "pune", 50.0);
+
+~ select * from flight;
+
+*** in vm again open new terminal and run code in gedit:*****
+
+~ gedit f.txt
+text file will be opened.
+insert records in it:
+923,2009,navi mumbai,60.0
+156,2009,kolhapur,78.0
+112,2009,pune,0.0
+322,2008,nagpur,90.0
+132,2008,aurangabadm67.0
+
+save and close file
+
+back to gedit f.txt terminal
+
+~ pwd
+
+~ ls
+
+go to hive terminal
+
+~ load data local inpath "f.txt"
+> overwrite into table flight;
+
+~ select * from flight;
+
+~ create table nflight(fno int, year int, source varchar(10))
+> row format delimited
+> fields terminated by ','
+> lines terminated by '\n'
+> stored as textfile;
+
+~ select * from flight;
+
+~ insert into nflight values(923,2009, "pune");
+
+~ select a.fno, a.year, a.dest, a.delay,b.source
+> from flight a join nflight b
+> on(a.fno=b.fno);
+
+~ create index flight_index on table flight(fno)
+> as 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler'
+> WITH DEFERRED REBUILD;
+
+~ show tables;
